@@ -1,4 +1,3 @@
-
 #include "get_next_line.h"
 
 void	ft_lstadd_end(t_list **begin_list, t_list *n)
@@ -60,12 +59,12 @@ int get_line_len(t_list *begin_list)
 	}
 	return(len);
 }
-
+/*
 void del_content(void* content, size_t n)
 {
 	free(content);
 }
-
+*/
 // Hint to keep only 1 static variable: keep only interesting char in buf.
 // Still to do: put pos to BUFF_SIZE for EOF. 
 
@@ -79,9 +78,13 @@ int get_next_line(const int fd, char **line)
 	t_list *elem;
 
 	begin_list = 0;
+	if (fd < 0)
+		return(-1);
 //	printf("Buffer at beginning: %s\n", buf);
 //	printf("pos[0] = %d\n", pos[0]);
-	if (pos[0] < ft_strlen(buf))
+	if (buf[0] == '\0' && pos[0] == 1)
+		return(0);
+	if (pos[0] < (int)ft_strlen(buf))
 	{
 		elem = ft_lstnew(buf + pos[0], ft_strlen(buf) - pos[0] + 1);
 //		printf("Buffer in if %s\n", elem->content);
@@ -95,6 +98,8 @@ int get_next_line(const int fd, char **line)
 		ft_lstadd_end(&begin_list, elem);
 //		printf("Buffer in while: %s\n", elem->content);
 	}
+	if (nb == -1)
+		return(-1);
 	line_len = get_line_len(begin_list);
 	*line = (char*)malloc((line_len) * sizeof(char));
 	*line[0] = '\0';
@@ -105,7 +110,11 @@ int get_next_line(const int fd, char **line)
 		ft_strncat(*line, elem->content, line_len - ft_strlen(*line));
 		elem = elem->next;
 	}
-	ft_lstdel(&begin_list, &del_content);
+	//ft_lstdel(&begin_list, &del_content);
+	if (!ft_strchr(buf, '\n')|| (nb == 0 && pos[0] == 0))
+        buf[0] = '\0';
+	if (ft_strchr(buf, '\n') && (nb == 0 && pos[0] == 0) && buf[ft_strlen(buf) - 1] == '\n')
+        return (0);
 	pos[0]++;
 	return (1);
 }

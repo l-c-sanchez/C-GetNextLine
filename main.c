@@ -14,7 +14,7 @@ int main(int argc, char **argv)
 
 	int i;
 	i = 0;
-	while (i < 30)
+	while (i < 10)
 	{
 		if (get_next_line(fd, &line) == 1)
 			printf("voici la ligne %d : %s\n", i, line);
