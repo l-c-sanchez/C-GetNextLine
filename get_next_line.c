@@ -15,28 +15,27 @@ void	ft_lstadd_end(t_list **begin_list, t_list *n)
 	l->next = n;
 }
 
-/*
-** Returns 1 if c is in str. 
-** In that case, update pos[0] to the position of c in str.
-** Else pos[0] to 0.
-*/
 
-int c_in_str(char *str, char c, int pos[1])
+int ft_shift_str_until(char *str, char c)
 {
 	int i;
+	int j;
 
 	i = 0;
-	i = pos[0];
-	while (str[i])
-	{
-		if (str[i] == c)
-		{
-			pos[0] = i;
-			return(1);
-		}
+	j = 0;
+	while (str[i] && str[i] != c)
 		i++;
+	if (i + 1 >= (int)ft_strlen(str))
+	{
+		str[0] = '\0';
+		return(1);	
 	}
-	pos[0] = 0;
+	while(str[i+1+j] != '\0')
+	{
+		str[j] = str[i + 1 + j]; 
+		j++;
+	}
+	str[j] = '\0';
 	return(0);
 }
 
@@ -44,34 +43,50 @@ int get_line_len(t_list *begin_list)
 {
 	t_list *elem;
 	int len;
-	int pos[1];
+	int i;
+	char *str;
 
 	len = 0;
-	pos[0] = 0;
 	elem = begin_list;
 	while (elem)
 	{
-		if (c_in_str(elem->content, '\n', pos))
-			len += pos[0];
-		else
-			len += ft_strlen(elem->content);
+		str = elem->content;
+		i = 0;
+		while (str[i] && (str[i] != '\n'))
+			i++;
+		len += i;
 		elem = elem->next;
 	}
 	return(len);
 }
-/*
+
+int only_c_in_str(char *str, char c)
+{
+	int i;
+
+	i = 0;
+	while (str[i] != '\0')
+	{
+		if (str[i] != c)
+			return(0);
+		i++;
+	}
+	return(1);
+}
+
+
 void del_content(void* content, size_t n)
 {
+	n++;
 	free(content);
 }
-*/
+
 // Hint to keep only 1 static variable: keep only interesting char in buf.
 // Still to do: put pos to BUFF_SIZE for EOF. 
 
 int get_next_line(const int fd, char **line)
 {
 	static char buf[BUFF_SIZE + 1];
-	static int pos[1];
 	int line_len;
 	int nb;
 	t_list *begin_list;
@@ -80,23 +95,19 @@ int get_next_line(const int fd, char **line)
 	begin_list = 0;
 	if (fd < 0)
 		return(-1);
-//	printf("Buffer at beginning: %s\n", buf);
-//	printf("pos[0] = %d\n", pos[0]);
-	if (buf[0] == '\0' && pos[0] == 1)
-		return(0);
-	if (pos[0] < (int)ft_strlen(buf))
-	{
-		elem = ft_lstnew(buf + pos[0], ft_strlen(buf) - pos[0] + 1);
-//		printf("Buffer in if %s\n", elem->content);
-		ft_lstadd_end(&begin_list, elem);
-	}
 	nb = 0;
-	while ((c_in_str(buf, '\n', pos) == 0) && ((nb = read(fd, buf, BUFF_SIZE)) > 0))
+	while (1)
 	{
-		buf[nb] = '\0';
-		elem = ft_lstnew(buf, nb + 1);
+		elem = ft_lstnew(buf, BUFF_SIZE + 1);
 		ft_lstadd_end(&begin_list, elem);
-//		printf("Buffer in while: %s\n", elem->content);
+		if (ft_strchr(buf, '\n'))
+			break;
+		nb = read(fd, buf, BUFF_SIZE);
+		if (nb == -1)
+			return(-1);
+		buf[nb] = '\0';
+		if (nb == 0)
+			break;
 	}
 	if (nb == -1)
 		return(-1);
@@ -106,16 +117,14 @@ int get_next_line(const int fd, char **line)
 	elem = begin_list;
 	while (elem)
 	{
-//		printf("Buffer in elem: %s\n", elem->content);	
 		ft_strncat(*line, elem->content, line_len - ft_strlen(*line));
 		elem = elem->next;
 	}
-	//ft_lstdel(&begin_list, &del_content);
-	if (!ft_strchr(buf, '\n')|| (nb == 0 && pos[0] == 0))
-        buf[0] = '\0';
-	if (ft_strchr(buf, '\n') && (nb == 0 && pos[0] == 0) && buf[ft_strlen(buf) - 1] == '\n')
-        return (0);
-	pos[0]++;
+	ft_lstdel(&begin_list, &del_content);
+	ft_shift_str_until(buf, '\n');
+	if ((nb < BUFF_SIZE) && (ft_strlen(*line) == 0) && only_c_in_str(buf, '\n'))
+		return(0);
 	return (1);
 }
+
 

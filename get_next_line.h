@@ -2,7 +2,7 @@
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
-#define BUFF_SIZE 3
+#define BUFF_SIZE 18
 
 # include <unistd.h>
 # include <stdlib.h>
