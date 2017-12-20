@@ -28,7 +28,7 @@ int ft_shift_str_until(char *str, char c)
 	if (i + 1 >= (int)ft_strlen(str))
 	{
 		str[0] = '\0';
-		return(1);	
+		return (1);	
 	}
 	while(str[i+1+j] != '\0')
 	{
@@ -36,7 +36,7 @@ int ft_shift_str_until(char *str, char c)
 		j++;
 	}
 	str[j] = '\0';
-	return(0);
+	return (0);
 }
 
 int get_line_len(t_list *begin_list)
@@ -63,15 +63,21 @@ int get_line_len(t_list *begin_list)
 int only_c_in_str(char *str, char c)
 {
 	int i;
+	int ct_c;
 
 	i = 0;
+	ct_c = 0;
 	while (str[i] != '\0')
 	{
-		if (str[i] != c)
-			return(0);
 		i++;
 	}
-	return(1);
+	if (i > 1)
+		return (0);
+	if (i == 1 && str[0] == c)
+		return (1);
+	if (i == 0)
+		return (1);
+	return (0);
 }
 
 
@@ -80,9 +86,6 @@ void del_content(void* content, size_t n)
 	n++;
 	free(content);
 }
-
-// Hint to keep only 1 static variable: keep only interesting char in buf.
-// Still to do: put pos to BUFF_SIZE for EOF. 
 
 int get_next_line(const int fd, char **line)
 {
@@ -112,17 +115,20 @@ int get_next_line(const int fd, char **line)
 	if (nb == -1)
 		return(-1);
 	line_len = get_line_len(begin_list);
-	*line = (char*)malloc((line_len) * sizeof(char));
+	*line = (char*)malloc((line_len + 1) * sizeof(char));
 	*line[0] = '\0';
 	elem = begin_list;
 	while (elem)
 	{
 		ft_strncat(*line, elem->content, line_len - ft_strlen(*line));
+	//	printf("line = %s\n", *line);
 		elem = elem->next;
 	}
-	ft_lstdel(&begin_list, &del_content);
+//	ft_lstdel(&begin_list, &del_content);
 	ft_shift_str_until(buf, '\n');
-	if ((nb < BUFF_SIZE) && (ft_strlen(*line) == 0) && only_c_in_str(buf, '\n'))
+//	printf("shift = %d\n", ft_shift_str_until(buf, '\n'));
+//	printf("nb = %d\nlongueur de line = %zu\nonly_c_in_str = %d\n\n", nb, ft_strlen(*line), only_c_in_str(buf, '\n'));
+	if ((nb < BUFF_SIZE) && (ft_strlen(*line) == 0) && only_c_in_str(buf, '\n') == 1)
 		return(0);
 	return (1);
 }
