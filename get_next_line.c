@@ -57,7 +57,7 @@ int get_line_len(t_list *begin_list)
 		len += i;
 		elem = elem->next;
 	}
-	return(len);
+	return (len);
 }
 
 int only_c_in_str(char *str, char c)
@@ -121,15 +121,17 @@ int get_next_line(const int fd, char **line)
 	while (elem)
 	{
 		ft_strncat(*line, elem->content, line_len - ft_strlen(*line));
-	//	printf("line = %s\n", *line);
 		elem = elem->next;
 	}
-//	ft_lstdel(&begin_list, &del_content);
-	ft_shift_str_until(buf, '\n');
-//	printf("shift = %d\n", ft_shift_str_until(buf, '\n'));
-//	printf("nb = %d\nlongueur de line = %zu\nonly_c_in_str = %d\n\n", nb, ft_strlen(*line), only_c_in_str(buf, '\n'));
+	ft_lstdel(&begin_list, &del_content);
+	if ((int)ft_strlen(buf) == 1 && buf[0] == '\n')
+	{
+		buf[0]='\0';
+		return(1);
+	}
 	if ((nb < BUFF_SIZE) && (ft_strlen(*line) == 0) && only_c_in_str(buf, '\n') == 1)
 		return(0);
+	ft_shift_str_until(buf, '\n');
 	return (1);
 }
 
