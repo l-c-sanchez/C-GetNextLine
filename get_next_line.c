@@ -6,7 +6,7 @@
 /*   By: lesanche <lesanche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/21 13:55:51 by lesanche          #+#    #+#             */
-/*   Updated: 2017/12/21 16:34:46 by lesanche         ###   ########.fr       */
+/*   Updated: 2017/12/23 16:22:41 by lesanche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,14 +77,14 @@ void	del_content(void *content, size_t n)
 	free(content);
 }
 
-int get_line_from_list(t_list *b_list, char **line)
+int		get_line_from_list(t_list *b_list, char **line)
 {
-	t_list *el;
-	int line_len;
+	t_list	*el;
+	int		line_len;
 
 	line_len = get_line_len(b_list);
 	if ((*line = (char*)malloc((line_len + 1) * sizeof(char))) == NULL)
-		return(-1);
+		return (-1);
 	*line[0] = '\0';
 	el = b_list;
 	while (el)
@@ -93,7 +93,7 @@ int get_line_from_list(t_list *b_list, char **line)
 		el = el->next;
 	}
 	ft_lstdel(&b_list, &del_content);
-	return(0);
+	return (0);
 }
 
 int		get_next_line(const int fd, char **line)
@@ -114,10 +114,11 @@ int		get_next_line(const int fd, char **line)
 		buf[nb] = '\0';
 	}
 	if (get_line_from_list(b_list, line) == -1)
-		return(-1);
+		return (-1);
 	if ((int)ft_strlen(buf) == 1 && buf[0] == '\n')
 		buf[0] = '\0';
-	else if ((nb < BUFF_SIZE) && (ft_strlen(*line) == 0) && (ft_strlen(buf) == 0))
+	else if ((nb < BUFF_SIZE) && (ft_strlen(*line) == 0) &&
+			(ft_strlen(buf) == 0))
 		return (0);
 	ft_shift_str_until(buf, '\n');
 	return (1);
