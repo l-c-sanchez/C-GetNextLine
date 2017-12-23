@@ -6,7 +6,7 @@
 /*   By: lesanche <lesanche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/21 13:55:51 by lesanche          #+#    #+#             */
-/*   Updated: 2017/12/23 16:22:41 by lesanche         ###   ########.fr       */
+/*   Updated: 2017/12/23 17:59:53 by lesanche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,49 +50,53 @@ int		ft_shift_str_until(char *str, char c)
 	return (0);
 }
 
-int		get_line_len(t_list *begin_list)
-{
-	t_list	*elem;
-	int		len;
-	int		i;
-	char	*str;
-
-	len = 0;
-	elem = begin_list;
-	while (elem)
-	{
-		str = elem->content;
-		i = 0;
-		while (str[i] && (str[i] != '\n'))
-			i++;
-		len += i;
-		elem = elem->next;
-	}
-	return (len);
-}
-
 void	del_content(void *content, size_t n)
 {
-	n++;
+	n = 0;
 	free(content);
 }
 
-int		get_line_from_list(t_list *b_list, char **line)
+void	ft_lstdel_bis(t_list **alst)
 {
-	t_list	*el;
-	int		line_len;
+	t_list	*n;
 
-	line_len = get_line_len(b_list);
+	while (*alst != NULL)
+	{
+		n = (*alst)->next;
+		free((*alst)->content);
+		ft_memdel((void **)alst);
+		*alst = n;
+	}
+}
+
+
+int		get_line_from_list(t_list *b_list, char **line, t_list *el)
+{
+	int		line_len;
+	char	*str;
+	int		i;
+
+	line_len = 0;
+	while (el)
+	{
+		str = el->content;
+		i = 0;
+		while (str[i] && (str[i] != '\n'))
+			i++;
+		line_len += i;
+		el = el->next;
+	}
 	if ((*line = (char*)malloc((line_len + 1) * sizeof(char))) == NULL)
 		return (-1);
-	*line[0] = '\0';
 	el = b_list;
+	*line[0] = '\0';
 	while (el)
 	{
 		ft_strncat(*line, el->content, line_len - ft_strlen(*line));
 		el = el->next;
 	}
-	ft_lstdel(&b_list, &del_content);
+	//ft_lstdel(&b_list, &del_content);
+	ft_lstdel_bis(&b_list);
 	return (0);
 }
 
@@ -101,9 +105,9 @@ int		get_next_line(const int fd, char **line)
 	static char		buf[BUFF_SIZE + 1];
 	int				nb;
 	t_list			*b_list;
+	t_list			*el;
 
 	b_list = 0;
-	nb = 0;
 	while (1)
 	{
 		ft_lstadd_end(&b_list, ft_lstnew(buf, BUFF_SIZE + 1));
@@ -113,12 +117,13 @@ int		get_next_line(const int fd, char **line)
 			return (-1);
 		buf[nb] = '\0';
 	}
-	if (get_line_from_list(b_list, line) == -1)
+	el = b_list;
+	if (get_line_from_list(b_list, line, el) == -1)
 		return (-1);
 	if ((int)ft_strlen(buf) == 1 && buf[0] == '\n')
 		buf[0] = '\0';
-	else if ((nb < BUFF_SIZE) && (ft_strlen(*line) == 0) &&
-			(ft_strlen(buf) == 0))
+	else if ((nb < BUFF_SIZE) && (ft_strlen(*line) == 0)
+			&& (ft_strlen(buf) == 0))
 		return (0);
 	ft_shift_str_until(buf, '\n');
 	return (1);
