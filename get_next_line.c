@@ -6,7 +6,7 @@
 /*   By: lesanche <lesanche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/21 13:55:51 by lesanche          #+#    #+#             */
-/*   Updated: 2017/12/23 17:59:53 by lesanche         ###   ########.fr       */
+/*   Updated: 2017/12/27 11:03:56 by lesanche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,25 +50,18 @@ int		ft_shift_str_until(char *str, char c)
 	return (0);
 }
 
-void	del_content(void *content, size_t n)
-{
-	n = 0;
-	free(content);
-}
-
-void	ft_lstdel_bis(t_list **alst)
+void	ft_lstdel_bis(t_list **b_list)
 {
 	t_list	*n;
 
-	while (*alst != NULL)
+	while (*b_list != NULL)
 	{
-		n = (*alst)->next;
-		free((*alst)->content);
-		ft_memdel((void **)alst);
-		*alst = n;
+		n = (*b_list)->next;
+		free((*b_list)->content);
+		ft_memdel((void **)b_list);
+		*b_list = n;
 	}
 }
-
 
 int		get_line_from_list(t_list *b_list, char **line, t_list *el)
 {
@@ -95,7 +88,6 @@ int		get_line_from_list(t_list *b_list, char **line, t_list *el)
 		ft_strncat(*line, el->content, line_len - ft_strlen(*line));
 		el = el->next;
 	}
-	//ft_lstdel(&b_list, &del_content);
 	ft_lstdel_bis(&b_list);
 	return (0);
 }

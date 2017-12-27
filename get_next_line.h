@@ -6,13 +6,13 @@
 /*   By: lesanche <lesanche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/21 13:56:21 by lesanche          #+#    #+#             */
-/*   Updated: 2017/12/23 17:48:57 by lesanche         ###   ########.fr       */
+/*   Updated: 2017/12/27 11:04:05 by lesanche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
-# define BUFF_SIZE 1
+# define BUFF_SIZE 30
 
 # include <unistd.h>
 # include <stdlib.h>
@@ -23,7 +23,5 @@
 # include <stdio.h>
 
 int get_next_line(const int fd, char **line);
-
-
 
 #endif
