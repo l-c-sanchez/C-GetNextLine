@@ -6,7 +6,7 @@
 /*   By: lesanche <lesanche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/21 13:55:51 by lesanche          #+#    #+#             */
-/*   Updated: 2018/01/02 18:18:38 by lesanche         ###   ########.fr       */
+/*   Updated: 2018/01/03 10:53:52 by lesanche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,29 +94,29 @@ int		ft_get_line_from_list(t_list *b_list, char **line, t_list *el)
 
 int		get_next_line(const int fd, char **line)
 {
-	static char		b[OPEN_MAX][BUFF_SIZE + 1];
+	static char		b[BUFF_SIZE + 1];
 	int				nb;
 	t_list			*b_list;
 	t_list			*el;
 
 	b_list = 0;
-	if (fd < 0 || fd > OPEN_MAX)
+	if (fd < 0)
 		return (-1);
 	while (1)
 	{
-		ft_lstadd_end(&b_list, ft_lstnew(b[fd], BUFF_SIZE + 1));
-		if (ft_strchr(b[fd], '\n') || (nb = read(fd, b[fd], BUFF_SIZE)) == 0
+		ft_lstadd_end(&b_list, ft_lstnew(b, BUFF_SIZE + 1));
+		if (ft_strchr(b, '\n') || (nb = read(fd, b, BUFF_SIZE)) == 0
 			|| nb == -1)
 			break ;
-		b[fd][nb] = '\0';
+		b[nb] = '\0';
 	}
 	el = b_list;
 	if (nb == -1 || ft_get_line_from_list(b_list, line, el) == -1)
 		return (-1);
-	if ((int)ft_strlen(b[fd]) == 1 && b[fd][0] == '\n')
-		b[fd][0] = '\0';
-	else if (nb < BUFF_SIZE && ft_strlen(*line) == 0 && ft_strlen(b[fd]) == 0)
+	if ((int)ft_strlen(b) == 1 && b[0] == '\n')
+		b[0] = '\0';
+	else if (nb < BUFF_SIZE && ft_strlen(*line) == 0 && ft_strlen(b) == 0)
 		return (0);
-	ft_shift_str_until(b[fd], '\n');
+	ft_shift_str_until(b, '\n');
 	return (1);
 }
